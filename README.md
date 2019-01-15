@@ -67,5 +67,5 @@ dictResponse = Twispay.decrypt_ipn_response(encryptedIpnResponse, secretKey)
 
 Run the sample code from the command line using Pipenv:
 
-- execute `pipenv run python ./example/twispayOrder.py` to generate and output the HTML form for a Twispay order;
-- execute `pipenv run python ./example/twispayIpn.py` to decrypt and output the received data from a IPN call.
+- execute `pipenv install` and `pipenv run python ./example/twispayOrder.py` to generate and output the HTML form for a Twispay order;
+- execute `pipenv install` and `pipenv run python ./example/twispayIpn.py` to decrypt and output the received data from a IPN call.
