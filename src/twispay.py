@@ -4,34 +4,51 @@ import base64
 import json
 from Crypto.Cipher import AES
 
-
 class Twispay:
+    """
+    The Twispay class implements methods to get the value
+    of `jsonRequest` and `checksum` that need to be sent by POST
+    when making a Twispay order and to decrypt the Twispay IPN response.
+    """
     def __init__(self):
         pass
 
     @staticmethod
     def get_base64_json_request(dict_order_data):
+        """Get the `jsonRequest` parameter (order parameters as JSON and base64 encoded).
+
+        :param dict_order_data: The order parameters.
+        :type dict_order_data: dict
+
+        :return str
+        """
         return base64.b64encode(json.dumps(dict_order_data).encode("ascii")).decode("utf8")
 
     @staticmethod
     def get_base64_checksum(dict_order_data, secret_key):
+        """Get the `checksum` parameter (the checksum computed over the `jsonRequest` and base64 encoded).
+
+        :param dict_order_data: The order parameters.
+        :type dict_order_data: dict
+        :param secret_key: The secret key (from Twispay).
+        :type secret_key: str
+
+        :return str
+        """
         hmac_sha512 = hmac.new(secret_key.encode("ascii"), json.dumps(dict_order_data).encode("ascii"), hashlib.sha512).digest()
         return base64.b64encode(hmac_sha512).decode("utf-8")
 
     @staticmethod
-    def get_html_order_form(dict_order_data, secret_key, twispay_live=False):
-        base64_json_request = Twispay.get_base64_json_request(dict_order_data)
-        base64_checksum = Twispay.get_base64_checksum(dict_order_data, secret_key)
-        host_name = ("secure-stage.twispay.com", "secure.twispay.com")[twispay_live]
-        return """<form action="https://""" + host_name + """" method="post" accept-charset="UTF-8">
-    <input type="hidden" name="jsonRequest" value=\"""" + base64_json_request + """\">
-    <input type="hidden" name="checksum" value=\"""" + base64_checksum + """\">
-    <input type="submit" value="Pay">
-</form>
-"""
-
-    @staticmethod
     def decrypt_ipn_response(encrypted_ipn_response, secret_key):
+        """Decrypt the IPN response from Twispay.
+
+        :param encrypted_ipn_response
+        :type encrypted_ipn_response: str
+        :param secret_key: The secret key (from Twispay).
+        :type secret_key: str
+
+        :return str
+        """
         # get the IV and the encrypted data
         encrypted_parts = encrypted_ipn_response.split(',', 2)
         iv = base64.b64decode(encrypted_parts[0])
