@@ -12,7 +12,7 @@ from src.twispay import Twispay
 dictOrderData = {
     "siteId": 1,
     "customer": {
-        "identifier": "identifier",
+        "identifier": "external-user-id",
         "firstName": "John ",
         "lastName": "Doe",
         "country": "US",
