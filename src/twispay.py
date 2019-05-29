@@ -3,6 +3,7 @@ import hashlib
 import base64
 import json
 from Crypto.Cipher import AES
+from Crypto.Util.Padding import unpad
 
 class Twispay:
     """
@@ -56,7 +57,10 @@ class Twispay:
 
         # decrypt the encrypted data
         cipher = AES.new(secret_key, AES.MODE_CBC, iv)
-        decrypted_ipn_response = cipher.decrypt(encrypted_data).decode('utf-8')
+        decrypted_ipn_response = cipher.decrypt(encrypted_data).decode("utf-8")
+
+        # remove padding bytes
+        decrypted_ipn_response = unpad(decrypted_ipn_response, AES.block_size)
 
         # JSON decode the decrypted data
         return json.loads(decrypted_ipn_response)
